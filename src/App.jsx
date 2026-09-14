@@ -30,6 +30,21 @@ function loadGoWebState(){
   catch(e) { return {}; }
 }
 
+function normalizeCart(items){
+  const map = new Map();
+  (Array.isArray(items) ? items : []).filter(Boolean).forEach(item => {
+    const id = String(item.id);
+    const existing = map.get(id);
+    if(existing){ existing.quantity = Math.min(10, (Number(existing.quantity)||1) + (Number(item.quantity)||1)); }
+    else { map.set(id, {...item, quantity: Math.min(10, Math.max(1, Number(item.quantity)||1))}); }
+  });
+  return Array.from(map.values());
+}
+
+function QuantitySelect({value,onChange,className="quantitySelect"}){
+  return <label className="quantityControl"><span>Quantity</span><select className={className} value={value} onChange={e=>onChange(Number(e.target.value))}>{Array.from({length:10},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}</select></label>;
+}
+
 function Icon({name, size=20}) {
   const p = {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"1.8",strokeLinecap:"round",strokeLinejoin:"round"};
   const paths = {
@@ -115,6 +130,7 @@ function Header({onNavigate, onSearch, addresses, setAddress, selectedAddress, c
 
 function ProductCard({p,onProduct,onCart,onWish,onWishlist}) {
   const [wish,setWish]=useState("");
+  const [quantity,setQuantity]=useState(1);
   return <article className="productCard">
     <button className="productImageBtn" onClick={()=>onProduct(p.id)}><img src={p.image} alt={p.name}/></button>
     <div className="productInfo">
@@ -123,10 +139,11 @@ function ProductCard({p,onProduct,onCart,onWish,onWishlist}) {
       <div className="price">₹{p.price.toLocaleString("en-IN")} <del>₹{p.oldPrice.toLocaleString("en-IN")}</del></div>
       <div className="delivery">FREE Delivery</div>
       <div className="cardActions">
-        <select value={wish} onChange={e=>{setWish(e.target.value);if(e.target.value){onWish(p,e.target.value);onWishlist&&onWishlist()}}} aria-label="Add to wishlist">
+        <QuantitySelect value={quantity} onChange={setQuantity}/>
+        <select className="listSelect" value={wish} onChange={e=>{setWish(e.target.value);if(e.target.value){onWish(p,e.target.value);onWishlist&&onWishlist()}}} aria-label="Add to wishlist">
           <option value="">Add to List</option><option>Wishlist A</option><option>Wishlist B</option><option>Wishlist C</option>
         </select>
-        <button type="button" className="miniCart" onClick={(e)=>{e.preventDefault();e.stopPropagation();onCart(p,true)}}>Add to Cart</button>
+        <button type="button" className="miniCart" onClick={(e)=>{e.preventDefault();e.stopPropagation();onCart(p,quantity,true)}}>Add to Cart</button>
       </div>
     </div>
   </article>
@@ -157,20 +174,25 @@ function Category({category,onNavigate,onCart,onWish}) {
 }
 
 function ProductPage({p,onBack,onCart}) {
+  const [quantity,setQuantity]=useState(1);
   return <main className="page"><button className="backBtn" onClick={onBack}><Icon name="back" size={18}/> Back</button><div className="productPage">
     <div className="detailImage"><img src={p.image} alt={p.name}/></div>
-    <div className="detailInfo"><span className="eyebrow">{p.category}</span><h1>{p.name}</h1><div className="bigRating">★ {p.rating} <span>· 1,240 ratings</span></div><p className="detailDesc">{p.desc}</p><div className="detailPrice">₹{p.price.toLocaleString("en-IN")} <del>₹{p.oldPrice.toLocaleString("en-IN")}</del></div><p className="delivery"><b>FREE Delivery</b> · In stock</p><div className="detailActions"><button className="primary" onClick={()=>onCart(p,true)}>Add to Cart</button><button className="secondary" onClick={()=>onCart(p,true)}>Buy Now</button></div><div className="trust">✓ Secure payments &nbsp; ✓ Easy returns &nbsp; ✓ Genuine products</div></div>
+    <div className="detailInfo"><span className="eyebrow">{p.category}</span><h1>{p.name}</h1><div className="bigRating">★ {p.rating} <span>· 1,240 ratings</span></div><p className="detailDesc">{p.desc}</p><div className="detailPrice">₹{p.price.toLocaleString("en-IN")} <del>₹{p.oldPrice.toLocaleString("en-IN")}</del></div><p className="delivery"><b>FREE Delivery</b> · In stock</p><QuantitySelect value={quantity} onChange={setQuantity}/><div className="detailActions"><button className="primary" onClick={()=>onCart(p,quantity,true)}>Add to Cart</button><button className="secondary" onClick={()=>onCart(p,quantity,true)}>Buy Now</button></div><div className="trust">✓ Secure payments &nbsp; ✓ Easy returns &nbsp; ✓ Genuine products</div></div>
   </div></main>
 }
 
 function Wishlist({wishlists,setWishlists,onNavigate,onCart}) {
   const [mergeOpen,setMergeOpen]=useState(false);
-  const addWishlistItemToCart=(p,listKey)=>{ setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>id!==p.id)})); onCart(p,true); };
-  const move=(id,list)=>setWishlists(w=>({...w,[list]:[...new Set([...w[list],id])]}));
   return <main className="page"><div className="pageTitle split"><div><span className="eyebrow">YOUR LISTS</span><h1>Wishlist</h1></div><button className="primary small" onClick={()=>setMergeOpen(true)}>Merge List</button></div>
-    <div className="wishColumns">{["A","B","C"].map(k=><section className="wishCol" key={k}><h3>Wishlist {k}</h3><div className="wishItems">{wishlists[k].length?<>{wishlists[k].map(id=>{const p=products.find(x=>x.id===id);return <div className="wishItem" key={id}><img src={p.image}/><div><b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span><button onClick={()=>onCart(p,true)}>Add to Cart</button></div></div>})}</>:<p className="empty">No products in this list.</p>}</div></section>)}</div>
+    <div className="wishColumns">{["A","B","C"].map(k=><section className="wishCol" key={k}><h3>Wishlist {k}</h3><div className="wishItems">{wishlists[k].length?<>{wishlists[k].map(id=>{const p=products.find(x=>x.id===id);if(!p)return null;return <WishlistItem key={id} p={p} onCart={onCart} setWishlists={setWishlists} listKey={k}/>})}</>:<p className="empty">No products in this list.</p>}</div></section>)}</div>
     {mergeOpen&&<div className="modalShade"><div className="modal"><button className="close" onClick={()=>setMergeOpen(false)}><Icon name="close"/></button><h2>Merge List</h2><p>Choose two wishlists to combine. Duplicate product IDs will be shown only once.</p><div className="mergeOptions">{[["A","B"],["A","C"],["B","C"]].map(([a,b])=><button key={a+b} onClick={()=>{setMergeOpen(false);onNavigate("merge",a+b)}}>Wishlist {a} + Wishlist {b}<Icon name="arrow" size={18}/></button>)}</div></div></div>}
   </main>
+}
+
+function WishlistItem({p,onCart,setWishlists,listKey}){
+  const [quantity,setQuantity]=useState(1);
+  const add=()=>{setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>id!==p.id)}));onCart(p,quantity,true)};
+  return <div className="wishItem"><img src={p.image}/><div className="wishItemMain"><b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button onClick={add}>Add to Cart</button></div></div></div>;
 }
 
 function Merge({pair,wishlists,setWishlists,onNavigate,onCart}) {
@@ -178,13 +200,15 @@ function Merge({pair,wishlists,setWishlists,onNavigate,onCart}) {
   const a=selectedPair[0] || "A";
   const b=selectedPair[1] || "B";
   const ids=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
-  const addMergedItemToCart=(p)=>{
-    setWishlists(w=>({...w,[a]:(w[a]||[]).filter(id=>id!==p.id),[b]:(w[b]||[]).filter(id=>id!==p.id)}));
-    onCart(p,true);
-  };
   return <main className="page"><button className="backBtn" onClick={()=>onNavigate("wishlist")}><Icon name="back" size={18}/> Back to Wishlist</button><div className="pageTitle"><span className="eyebrow">MERGED LIST</span><h1>Wishlist {a} + Wishlist {b}</h1><p>{ids.length} unique product{ids.length!==1?"s":""} · duplicates automatically removed by Product ID</p></div>
-    {ids.length?<div className="mergedGrid">{ids.map(id=>{const p=products.find(x=>x.id===id); if(!p) return null; return <div className="mergedItem" key={id}><img src={p.image} alt={p.name}/><div><span className="sku">Product ID: {p.id}</span><h3>{p.name}</h3><b>₹{p.price.toLocaleString("en-IN")}</b><button className="miniCart" onClick={()=>addMergedItemToCart(p)}>Add to Cart</button></div></div>})}</div>:<div className="emptyPanel">Your selected lists have no products yet.</div>}
+    {ids.length?<div className="mergedGrid">{ids.map(id=>{const p=products.find(x=>x.id===id); if(!p) return null; return <MergedItem key={id} p={p} a={a} b={b} setWishlists={setWishlists} onCart={onCart}/>})}</div>:<div className="emptyPanel">Your selected lists have no products yet.</div>}
   </main>
+}
+
+function MergedItem({p,a,b,setWishlists,onCart}){
+  const [quantity,setQuantity]=useState(1);
+  const add=()=>{setWishlists(w=>({...w,[a]:(w[a]||[]).filter(id=>id!==p.id),[b]:(w[b]||[]).filter(id=>id!==p.id)}));onCart(p,quantity,true)};
+  return <div className="mergedItem"><img src={p.image} alt={p.name}/><div><span className="sku">Product ID: {p.id}</span><h3>{p.name}</h3><b>₹{p.price.toLocaleString("en-IN")}</b><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button className="miniCart" onClick={add}>Add to Cart</button></div></div></div>;
 }
 
 function Orders() {
@@ -192,10 +216,11 @@ function Orders() {
   return <main className="page"><div className="pageTitle"><span className="eyebrow">PURCHASE HISTORY</span><h1>Your Orders</h1></div><div className="orders">{orders.map(o=><div className="order" key={o[0]}><div className="orderTop"><b>Order {o[0]}</b><span>{o[3]}</span></div><div className="orderBody"><div><h3>{o[1]}</h3><p>{o[2]}</p></div><div className="timeline"><i className={o[3]!=="Cancelled"?"done":""}>Ordered</i><i className={["Shipped","Delivered"].includes(o[3])?"done":""}>Shipped</i><i className={o[3]==="Delivered"?"done":""}>Delivered</i></div></div></div>)}</div></main>
 }
 
-function Cart({cart,onRemove,onNavigate,onPay}) {
+function Cart({cart,onRemove,onQuantityChange,onNavigate,onPay}) {
   const safeCart=Array.isArray(cart)?cart.filter(Boolean):[];
-  const total=safeCart.reduce((s,p)=>s+(Number(p.price)||0),0);
-  return <main className="page"><div className="pageTitle"><span className="eyebrow">YOUR BAG</span><h1>Shopping Cart</h1><p>{safeCart.length} item{safeCart.length!==1?"s":""}</p></div>{safeCart.length?<div className="cartLayout"><div className="cartItems">{safeCart.map((p,i)=><div className="cartItem" key={p.id+"-"+i}><img src={p.image}/><div className="cartMain"><h3>{p.name}</h3><p>{p.desc}</p><b>₹{p.price.toLocaleString("en-IN")}</b><button className="deleteBtn" onClick={()=>onRemove(i)}>Delete</button></div></div>)}</div><aside className="summary"><span>Subtotal</span><h2>₹{total.toLocaleString("en-IN")}</h2><p>FREE delivery available</p><button className="primary" onClick={()=>onPay()}>Proceed to pay</button></aside></div>:<div className="emptyPanel"><div className="emptyIcon">🛒</div><h2>Your cart is empty</h2><button className="primary" onClick={()=>onNavigate("home")}>Continue shopping</button></div>}</main>
+  const total=safeCart.reduce((s,p)=>s+(Number(p.price)||0)*(Number(p.quantity)||1),0);
+  const totalUnits=safeCart.reduce((s,p)=>s+(Number(p.quantity)||1),0);
+  return <main className="page"><div className="pageTitle"><span className="eyebrow">YOUR BAG</span><h1>Shopping Cart</h1><p>{safeCart.length} unique item{safeCart.length!==1?"s":""} · {totalUnits} unit{totalUnits!==1?"s":""}</p></div>{safeCart.length?<div className="cartLayout"><div className="cartItems">{safeCart.map(p=><div className="cartItem" key={p.id}><img src={p.image}/><div className="cartMain"><h3>{p.name}</h3><p>{p.desc}</p><b>₹{p.price.toLocaleString("en-IN")} each</b><div className="cartControls"><QuantitySelect value={Number(p.quantity)||1} onChange={q=>onQuantityChange(p.id,q)}/><strong>Item total: ₹{((Number(p.price)||0)*(Number(p.quantity)||1)).toLocaleString("en-IN")}</strong><button className="deleteBtn" onClick={()=>onRemove(p.id)}>Delete</button></div></div></div>)}</div><aside className="summary"><span>Subtotal</span><h2>₹{total.toLocaleString("en-IN")}</h2><p>FREE delivery available</p><button className="primary" onClick={()=>onPay()}>Proceed to pay</button></aside></div>:<div className="emptyPanel"><div className="emptyIcon">🛒</div><h2>Your cart is empty</h2><button className="primary" onClick={()=>onNavigate("home")}>Continue shopping</button></div>}</main>
 }
 
 function Payment({total,onNavigate}) {
@@ -211,18 +236,26 @@ export default function App(){
   const saved = React.useMemo(() => loadGoWebState(), []);
   const [addresses,setAddresses]=useState(saved.addresses || addressesSeed);
   const [selectedAddress,setSelectedAddress]=useState(saved.selectedAddress || (saved.addresses || addressesSeed)[0]);
-  const [cart,setCart]=useState(saved.cart || []);
+  const [cart,setCart]=useState(()=>normalizeCart(saved.cart || []));
   const [wishlists,setWishlists]=useState(saved.wishlists || {A:["123","201"],B:["123","501"],C:["301"]});
 
   const navigate=(v,p=null)=>{setView(v);setParam(p);window.scrollTo({top:0,behavior:"smooth"})};
-  const addCart=(p,buyNow=false)=>{
+  const addCart=(p,quantity=1,buyNow=false)=>{
     if(!p) return;
-    setCart(c=>[...(Array.isArray(c)?c:[]),p]);
+    const qty=Math.min(10,Math.max(1,Number(quantity)||1));
+    setCart(c=>{
+      const next=normalizeCart(c);
+      const index=next.findIndex(item=>String(item.id)===String(p.id));
+      if(index>=0) next[index]={...next[index],quantity:Math.min(10,(Number(next[index].quantity)||1)+qty)};
+      else next.push({...p,quantity:qty});
+      return next;
+    });
     navigate("cart");
   };
   const addWish=(p,list)=>setWishlists(w=>({...w,[list[ list.length-1] ]:[...new Set([...(w[list[list.length-1]]||[]),p.id])]}));
-  const removeCart=i=>setCart(c=>c.filter((_,idx)=>idx!==i));
-  const total=cart.reduce((s,p)=>s+p.price,0);
+  const removeCart=id=>setCart(c=>c.filter(p=>String(p.id)!==String(id)));
+  const updateCartQuantity=(id,quantity)=>setCart(c=>c.map(p=>String(p.id)===String(id)?{...p,quantity:Math.min(10,Math.max(1,Number(quantity)||1))}:p));
+  const total=cart.reduce((s,p)=>s+(Number(p.price)||0)*(Number(p.quantity)||1),0);
   React.useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({addresses,selectedAddress,cart,wishlists}));
   }, [addresses,selectedAddress,cart,wishlists]);
@@ -230,14 +263,14 @@ export default function App(){
   const search=(q)=>{const p=products.find(x=>`${x.name} ${x.category}`.toLowerCase().includes(q.toLowerCase())); if(p)navigate("product",p.id); else if(q)alert(`No demo product found for "${q}"`)};
 
   return <div className="app">
-    <Header onNavigate={navigate} onSearch={search} addresses={addresses} setAddress={a=>{setSelectedAddress(a);setAddresses(xs=>xs.some(x=>x.id===a.id)?xs: [...xs,a])}} selectedAddress={selectedAddress} cartCount={cart.length}/>
+    <Header onNavigate={navigate} onSearch={search} addresses={addresses} setAddress={a=>{setSelectedAddress(a);setAddresses(xs=>xs.some(x=>x.id===a.id)?xs: [...xs,a])}} selectedAddress={selectedAddress} cartCount={cart.reduce((s,p)=>s+(Number(p.quantity)||1),0)}/>
     {view==="home"&&<Home onNavigate={navigate} onCart={addCart} onWish={addWish}/>}
     {view==="category"&&<Category category={param} onNavigate={navigate} onCart={addCart} onWish={addWish}/>}
     {view==="product"&&<ProductPage p={products.find(p=>p.id===param)||products[0]} onBack={()=>navigate("home")} onCart={addCart}/>}
     {view==="wishlist"&&<Wishlist wishlists={wishlists} setWishlists={setWishlists} onNavigate={navigate} onCart={addCart}/>}
     {view==="merge"&&<Merge pair={param||"AB"} wishlists={wishlists} setWishlists={setWishlists} onNavigate={navigate} onCart={addCart}/>}
     {view==="orders"&&<Orders/>}
-    {view==="cart"&&<Cart cart={cart} onRemove={removeCart} onNavigate={navigate} onPay={()=>navigate("payment")}/>}
+    {view==="cart"&&<Cart cart={cart} onRemove={removeCart} onQuantityChange={updateCartQuantity} onNavigate={navigate} onPay={()=>navigate("payment")}/>}
     {view==="payment"&&<Payment total={total} onNavigate={navigate}/>}
     {view==="account"&&<Account/>}
     <footer><b>Go<span>Web</span></b><span>Shop across India · Built as a functional prototype</span><span>© 2026 GoWeb</span></footer>
