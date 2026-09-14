@@ -1,3 +1,4 @@
+// GoWeb deployment build
 import React, { useMemo, useState } from "react";
 
 const categories = [
