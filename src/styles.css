@@ -24,3 +24,13 @@ footer{margin-top:auto;min-height:82px;flex-shrink:0}
 .quantityControl{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#44525a}.quantityControl select,.itemQuantity select{border:1px solid #ccd5da;background:#fff;border-radius:7px;padding:7px 9px;font-weight:700;cursor:pointer}.cardActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.listActions,.mergeActions{flex-wrap:wrap}.cartMain .listActions{margin-top:10px}.quantityControl select:focus{outline:2px solid #bfe8de;outline-offset:1px}
 
 .quantityControl{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#59656d;font-weight:700;white-space:nowrap}.quantityControl select{border:1px solid #ccd5da;border-radius:6px;background:#fff;padding:7px 22px 7px 8px;color:#17202a;font-size:12px}.cardActions .quantityControl{flex:0 0 auto}.cardActions .quantityControl span{display:none}.cardActions .listSelect{flex:1;min-width:105px;border:1px solid #ccd5da;border-radius:6px;padding:8px;background:#fff;font-size:12px}.itemActions{display:flex;align-items:center;gap:10px;margin-top:8px}.wishItemMain{flex:1;min-width:0}.wishItem .quantityControl span{display:inline}.mergedItem .itemActions{margin-top:10px}.cartControls{display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap}.cartControls strong{font-size:13px;color:#17202a}.cartItem{display:flex;gap:20px}.cartItem img{width:180px;height:180px;object-fit:cover;border-radius:9px}.cartMain{flex:1}.deleteBtn{border:0;background:none;color:#087e69;font-weight:800;padding:0}.detailInfo>.quantityControl{margin-top:10px}.detailInfo>.quantityControl span{font-size:13px}.detailInfo>.quantityControl select{padding:9px 28px 9px 10px}.detailActions{margin-top:18px}
+
+/* v10 quantity + list controls: intentionally visible on every product/list item */
+.cardActions .quantityControl{display:inline-flex !important;align-items:center;gap:6px;flex:0 0 auto;white-space:nowrap;}
+.cardActions .quantityControl span{display:inline !important;font-size:11px;color:#59656d;}
+.cardActions .quantityControl select{min-width:54px;padding:7px 20px 7px 8px;border:1px solid #ccd5da;border-radius:6px;background:#fff;}
+.itemActions .quantityControl{display:inline-flex !important;align-items:center;gap:6px;white-space:nowrap;}
+.itemActions .quantityControl span{display:inline !important;}
+.listActionBtn{border:0;background:#e4f7f2;color:#087b66;border-radius:6px;padding:8px 10px;font-weight:800;font-size:12px;}
+.listDelete{margin-left:2px !important;}
+.wishItem .itemActions,.mergedItem .itemActions{flex-wrap:wrap;}
