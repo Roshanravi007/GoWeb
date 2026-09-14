@@ -19,8 +19,6 @@ footer{margin-top:auto;min-height:82px;flex-shrink:0}
 /* v6 cart stability */
 .cartLayout{width:100%;min-height:240px}.cartItems{min-width:0}.summary{z-index:1}
 
-.savedMerges{margin-top:36px;padding-top:10px}.mergeHistory{display:flex;gap:14px;flex-wrap:wrap}.savedMergeCard{min-width:220px;padding:18px;text-align:left;background:#fff;border:1px solid #dfe5e7;border-radius:10px;display:flex;flex-direction:column;gap:7px;cursor:pointer}.savedMergeCard:hover{border-color:#18a98e}.savedMergeCard span{font-size:12px;color:#087e69;font-weight:700}.listActions,.mergeActions{display:flex!important;gap:12px!important;align-items:center}.deleteBtn{display:inline-block!important;visibility:visible!important;opacity:1!important;cursor:pointer!important}
 
-.mergeWindowLists{margin-bottom:28px;padding:18px 0 4px;border-bottom:1px solid #e2e7e9}.savedMergeCard.active{border-color:#18a98e;box-shadow:0 0 0 2px #18a98e22}.savedMergeCard.active span{color:#087e69}
-
-.noMergedLists{padding:28px 0 8px;color:#607080}.noMergedLists h3{margin:0 0 8px;font-size:22px;color:#102033}.noMergedLists p{margin:0}.mergeEmptyState{margin-top:24px}
+/* v8 product quantity controls */
+.quantityControl{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#44525a}.quantityControl select,.itemQuantity select{border:1px solid #ccd5da;background:#fff;border-radius:7px;padding:7px 9px;font-weight:700;cursor:pointer}.cardActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.listActions,.mergeActions{flex-wrap:wrap}.cartMain .listActions{margin-top:10px}.quantityControl select:focus{outline:2px solid #bfe8de;outline-offset:1px}
