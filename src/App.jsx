@@ -24,7 +24,7 @@ const addressesSeed = [
   {id:2,label:"Office",text:"Guindy, Chennai, Tamil Nadu 600032",default:false}
 ];
 
-const STORAGE_KEY = "goweb-prototype-state-v6";
+const STORAGE_KEY = "goweb-prototype-state-v10";
 function loadGoWebState(){
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
   catch(e) { return {}; }
@@ -41,8 +41,8 @@ function normalizeCart(items){
   return Array.from(map.values());
 }
 
-function QuantitySelect({value,onChange,className="quantitySelect"}){
-  return <label className="quantityControl"><span>Quantity</span><select className={className} value={value} onChange={e=>onChange(Number(e.target.value))}>{Array.from({length:10},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}</select></label>;
+function QuantitySelect({value,onChange,className="quantitySelect",compact=false}){
+  return <label className={`quantityControl ${compact?"compact":""}`}><span>Quantity</span><select className={className} value={Number(value)||1} onChange={e=>onChange(Number(e.target.value))} aria-label="Quantity">{Array.from({length:10},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}</select></label>;
 }
 
 function Icon({name, size=20}) {
@@ -192,7 +192,8 @@ function Wishlist({wishlists,setWishlists,onNavigate,onCart}) {
 function WishlistItem({p,onCart,setWishlists,listKey}){
   const [quantity,setQuantity]=useState(1);
   const add=()=>{setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>id!==p.id)}));onCart(p,quantity,true)};
-  return <div className="wishItem"><img src={p.image}/><div className="wishItemMain"><b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button onClick={add}>Add to Cart</button></div></div></div>;
+  const remove=()=>setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>String(id)!==String(p.id))}));
+  return <div className="wishItem"><img src={p.image} alt={p.name}/><div className="wishItemMain"><b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button className="listActionBtn" onClick={add}>Add to Cart</button><button className="deleteBtn listDelete" onClick={remove}>Delete</button></div></div></div>;
 }
 
 function Merge({pair,wishlists,setWishlists,onNavigate,onCart}) {
@@ -207,8 +208,9 @@ function Merge({pair,wishlists,setWishlists,onNavigate,onCart}) {
 
 function MergedItem({p,a,b,setWishlists,onCart}){
   const [quantity,setQuantity]=useState(1);
-  const add=()=>{setWishlists(w=>({...w,[a]:(w[a]||[]).filter(id=>id!==p.id),[b]:(w[b]||[]).filter(id=>id!==p.id)}));onCart(p,quantity,true)};
-  return <div className="mergedItem"><img src={p.image} alt={p.name}/><div><span className="sku">Product ID: {p.id}</span><h3>{p.name}</h3><b>₹{p.price.toLocaleString("en-IN")}</b><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button className="miniCart" onClick={add}>Add to Cart</button></div></div></div>;
+  const add=()=>{setWishlists(w=>({...w,[a]:(w[a]||[]).filter(id=>String(id)!==String(p.id)),[b]:(w[b]||[]).filter(id=>String(id)!==String(p.id))}));onCart(p,quantity,true)};
+  const remove=()=>setWishlists(w=>({...w,[a]:(w[a]||[]).filter(id=>String(id)!==String(p.id)),[b]:(w[b]||[]).filter(id=>String(id)!==String(p.id))}));
+  return <div className="mergedItem"><img src={p.image} alt={p.name}/><div><span className="sku">Product ID: {p.id}</span><h3>{p.name}</h3><b>₹{p.price.toLocaleString("en-IN")}</b><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button className="miniCart" onClick={add}>Add to Cart</button><button className="deleteBtn listDelete" onClick={remove}>Delete</button></div></div></div>;
 }
 
 function Orders() {
