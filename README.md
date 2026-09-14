@@ -8,6 +8,6 @@ Repository name: `GoWeb`
 
 Expected public URL:
 
-`https://YOUR-GITHUB-USERNAME.github.io/GoWeb/`
+`https://roshanravi007.github.io/GoWeb/`
 
 The project includes a GitHub Actions workflow that builds and deploys the Vite production build whenever code is pushed to `main`.
