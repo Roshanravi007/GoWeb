@@ -1,347 +1,54 @@
-import React, { useMemo, useState } from "react";
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f8fa;color:#17202a}button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh}.header{position:sticky;top:0;z-index:30;background:#101820;color:#fff;box-shadow:0 2px 12px #0002}.topbar{height:72px;display:flex;align-items:center;gap:12px;padding:0 22px;max-width:1600px;margin:auto}.logo{border:0;background:none;color:#fff;font-size:27px;font-weight:900;letter-spacing:-1.5px;padding:4px 10px}.logo span,footer span{color:#27c6a7}.navItem,.cartNav{border:0;background:none;color:#fff;display:flex;align-items:center;gap:7px;min-height:50px;padding:5px 9px;border-radius:7px}.navItem:hover,.cartNav:hover{background:#ffffff13}.navItem small{display:block;font-size:11px;color:#b8c0c8;line-height:14px}.navItem strong{font-size:13px;white-space:nowrap}.addressBtn{text-align:left}.searchArea{position:relative;display:flex;flex:1;max-width:680px;height:44px}.searchArea input{width:100%;border:0;outline:0;padding:0 48px 0 88px;font-size:15px;background:#fff;color:#18202a;border-radius:8px}.allBtn{position:absolute;z-index:2;left:0;height:44px;border:0;border-right:1px solid #ddd;background:#f2f3f3;color:#30363d;padding:0 13px;border-radius:8px 0 0 8px;display:flex;align-items:center;gap:5px}.searchBtn{position:absolute;right:0;height:44px;width:48px;border:0;background:#21b899;color:#fff;border-radius:0 8px 8px 0}.langBtn{gap:4px}.flag{font-size:20px}.cartNav{gap:5px}.cartIcon{position:relative}.cartIcon b{position:absolute;top:-10px;right:-8px;background:#ffb000;color:#111;border-radius:12px;min-width:18px;height:18px;text-align:center;font-size:11px;padding-top:1px}.popover{position:absolute;top:58px;background:#fff;color:#17202a;border:1px solid #dce2e7;border-radius:12px;box-shadow:0 16px 40px #14202a22;padding:12px;z-index:50}.addressPopover{left:0;width:350px}.categoryPopover{left:0;width:270px}.langPopover{right:0;width:180px}.accountPopover{right:0;width:360px}.popTitle{font-weight:800;padding:8px 10px 12px;border-bottom:1px solid #eee}.addressWrap,.accountWrap,.navDrop{position:relative}.addressChoice{width:100%;display:flex;justify-content:space-between;text-align:left;border:0;background:#fff;padding:12px 10px;border-radius:8px}.addressChoice:hover,.addressChoice.selected{background:#f1faf8}.addressChoice p{margin:4px 0 0;color:#64717d;font-size:12px}.pill{font-size:9px;margin-left:7px;background:#dff7f0;color:#087b63;padding:3px 5px;border-radius:4px}.addAddress{width:100%;border:0;background:#fff;color:#07836c;display:flex;gap:6px;padding:11px 9px;font-weight:700;text-align:left}.categoryPopover button,.langPopover button{display:block;width:100%;text-align:left;background:#fff;border:0;color:#075eb3;padding:10px;border-radius:6px}.categoryPopover button:hover,.langPopover button:hover{background:#f2f7fc;text-decoration:underline}.suggestions{position:absolute;top:47px;left:0;right:0;background:#fff;color:#18202a;border-radius:9px;box-shadow:0 14px 32px #0003;overflow:hidden;z-index:49}.suggestions button{display:flex;align-items:center;gap:12px;width:100%;padding:8px 12px;background:#fff;border:0;text-align:left}.suggestions button:hover{background:#f5f7f8}.suggestions img{width:42px;height:42px;object-fit:cover;border-radius:6px}.suggestions small{display:block;color:#7a858e;margin-top:2px}.accountCols{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:8px 10px 10px}.accountCols h4{margin:5px 0 8px}.accountCols button{display:block;width:100%;border:0;background:none;text-align:left;padding:7px 0;color:#075eb3}.hero{min-height:440px;background:linear-gradient(115deg,#101820 0%,#1d3c46 48%,#0e6d60 100%);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:60px max(6vw,40px);overflow:hidden}.hero h1{font-size:58px;line-height:1.03;letter-spacing:-3px;margin:12px 0}.hero h1 em{font-style:normal;color:#48d7bc}.hero p{font-size:17px;color:#d4e0e4;max-width:560px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;color:#14a98e}.hero .eyebrow{color:#65e3cb}.hero button,.primary{border:0;background:#22b899;color:#fff;padding:13px 18px;border-radius:7px;font-weight:800;display:inline-flex;align-items:center;gap:8px}.heroVisual{width:42%;height:300px;position:relative;display:flex;align-items:center;justify-content:center}.heroCircle{width:280px;height:280px;border-radius:50%;background:#fff;color:#142028;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:900;box-shadow:0 20px 70px #0005}.heroCircle span{color:#21b899}.floatingCard{position:absolute;right:4%;bottom:20px;background:#fff;color:#17202a;padding:15px 20px;border-radius:10px;box-shadow:0 15px 40px #0004}.floatingCard b{color:#087e68}.section{max-width:1420px;margin:0 auto;padding:48px 32px}.sectionHead,.pageTitle.split{display:flex;justify-content:space-between;align-items:end;margin-bottom:22px}.section h2,.pageTitle h1{font-size:31px;letter-spacing:-1px;margin:4px 0}.linkBtn{border:0;background:none;color:#087f6a;font-weight:800}.categoryGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.categoryGrid button{border:1px solid #e0e5e8;background:#fff;text-align:left;border-radius:12px;padding:18px;min-height:135px;transition:.2s}.categoryGrid button:hover{transform:translateY(-2px);box-shadow:0 8px 22px #0000000e;border-color:#b9dcd4}.categoryIcon{display:block;font-size:30px;margin-bottom:12px}.categoryGrid b{display:block;font-size:14px}.categoryGrid span:last-child{display:block;color:#0b8c74;font-size:12px;margin-top:9px}.featured{padding-top:5px}.productGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.productCard{background:#fff;border:1px solid #e1e6e9;border-radius:12px;overflow:hidden;min-width:0}.productImageBtn{width:100%;height:260px;border:0;background:#f1f3f4;padding:0}.productImageBtn img{width:100%;height:100%;object-fit:cover}.productInfo{padding:15px}.rating{color:#e18a00;font-size:12px}.rating span{color:#a2aab0}.productName{display:block;border:0;background:none;text-align:left;padding:5px 0;font-weight:800;font-size:17px;color:#17202a}.price{font-size:21px;font-weight:900;margin-top:4px}.price del,.detailPrice del{font-size:12px;color:#929ba2;font-weight:500;margin-left:5px}.delivery{font-size:12px;color:#63707a;margin:6px 0}.cardActions{display:flex;gap:7px;margin-top:10px}.cardActions select{flex:1;min-width:0;border:1px solid #ccd5da;border-radius:6px;padding:8px;background:#fff;font-size:12px}.miniCart{border:0;background:#e4f7f2;color:#087b66;border-radius:6px;padding:8px 10px;font-weight:800;font-size:12px}.page{max-width:1420px;margin:auto;padding:38px 32px 80px}.page.narrow{max-width:1050px}.backBtn{border:0;background:none;padding:0;color:#087e69;font-weight:800;display:flex;gap:5px;align-items:center}.pageTitle{margin:35px 0 28px}.pageTitle p{color:#6c7881;margin:7px 0}.productPage{display:grid;grid-template-columns:1fr 1fr;gap:55px;margin-top:35px}.detailImage{height:550px;background:#fff;border-radius:15px;overflow:hidden;border:1px solid #e2e6e8}.detailImage img{width:100%;height:100%;object-fit:cover}.detailInfo{padding:30px 0}.detailInfo h1{font-size:44px;line-height:1.05;letter-spacing:-2px;margin:10px 0}.bigRating{color:#d78600;font-weight:800}.bigRating span{color:#69747c;font-weight:500;font-size:13px}.detailDesc{font-size:16px;color:#56636c;line-height:1.7;max-width:600px;margin:25px 0}.detailPrice{font-size:32px;font-weight:900}.detailActions{display:flex;gap:10px;margin:22px 0}.secondary{border:1px solid #0b8c74;background:#fff;color:#087e69;border-radius:7px;padding:12px 22px;font-weight:800}.trust{border-top:1px solid #e3e7e9;padding-top:17px;color:#68757d;font-size:12px}.wishColumns{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.wishCol{background:#fff;border:1px solid #e0e5e8;border-radius:12px;overflow:hidden}.wishCol h3{margin:0;padding:18px;border-bottom:1px solid #e7ebed}.wishItems{padding:10px}.wishItem{display:flex;gap:12px;padding:10px;border-bottom:1px solid #edf0f1}.wishItem:last-child{border:0}.wishItem img{width:75px;height:75px;object-fit:cover;border-radius:7px}.wishItem b,.wishItem span{display:block}.wishItem span{font-size:13px;margin:4px 0}.wishItem button{border:0;background:none;color:#087e69;font-weight:800;padding:0;font-size:12px}.empty{padding:30px;color:#89939a;text-align:center}.primary.small{padding:10px 14px}.modalShade{position:fixed;inset:0;background:#0b151bb0;z-index:80;display:flex;align-items:center;justify-content:center;padding:20px}.modal{position:relative;background:#fff;width:450px;border-radius:15px;padding:28px;box-shadow:0 30px 80px #0005}.modal h2{margin:0 0 8px}.modal p{color:#69757d;line-height:1.5}.close{position:absolute;right:12px;top:12px;border:0;background:none}.mergeOptions button{display:flex;width:100%;justify-content:space-between;align-items:center;border:1px solid #dbe2e5;background:#fff;padding:14px;margin-top:9px;border-radius:8px;font-weight:800}.mergeOptions button:hover{border-color:#16a68b;background:#f3fbf9}.mergedGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.mergedItem{background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:12px}.mergedItem img{width:100%;height:220px;object-fit:cover;border-radius:8px}.mergedItem h3{margin:7px 0}.mergedItem b{display:block;font-size:18px;margin-bottom:8px}.sku{font-size:10px;color:#849097}.emptyPanel{background:#fff;border:1px dashed #cdd6db;border-radius:12px;padding:70px;text-align:center}.emptyIcon{font-size:50px}.orders{display:grid;gap:14px}.order{background:#fff;border:1px solid #e0e5e8;border-radius:12px;overflow:hidden}.orderTop{padding:14px 18px;background:#f3f6f7;display:flex;justify-content:space-between}.orderTop span{color:#087e69;font-weight:800}.orderBody{padding:18px;display:flex;justify-content:space-between;align-items:center}.orderBody h3{margin:0}.orderBody p{color:#5e6b73}.timeline{display:flex;gap:25px}.timeline i{font-style:normal;color:#a1abb1;font-size:12px}.timeline i.done{color:#087e69;font-weight:800}.cartLayout,.payment{display:grid;grid-template-columns:1fr 330px;gap:22px;align-items:start}.cartItems{display:grid;gap:12px}.cartItem{display:flex;background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:14px;gap:16px}.cartItem img{width:150px;height:150px;object-fit:cover;border-radius:8px}.cartMain h3{margin:4px 0}.cartMain p{color:#68757d;font-size:13px;line-height:1.5}.cartMain b{font-size:19px}.cartMain button{display:block;border:0;background:none;color:#087e69;padding:10px 0 0;font-size:12px;font-weight:800}.summary{background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:20px;position:sticky;top:92px}.summary span{color:#6c7881}.summary h2{margin:8px 0}.summary p{font-size:12px;color:#68757d}.summary .primary{width:100%;justify-content:center}.payment{margin-top:20px}.payment>div{background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:22px}.payMethod{width:100%;border:1px solid #dce3e6;background:#fff;border-radius:8px;text-align:left;padding:14px;margin:5px 0;font-weight:700}.payMethod.active{border-color:#16a68b;background:#f2fbf8;color:#087e69}.payMethod span{margin-right:9px}.payment input,.payment select{width:100%;padding:12px;border:1px solid #ccd5da;border-radius:7px;margin-top:9px}.two{display:flex;gap:8px}.accountPanel{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.accountPanel>div{background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:22px}.accountPanel p{color:#68757d;font-size:13px}footer{background:#101820;color:#b8c0c8;display:flex;gap:30px;justify-content:space-between;align-items:center;padding:30px 6%;font-size:12px}footer b{font-size:22px;color:#fff}@media(max-width:1000px){.topbar{gap:5px;padding:0 10px}.addressWrap,.langBtn,.ordersNav{display:none}.hero{padding:45px 30px}.hero h1{font-size:44px}.categoryGrid{grid-template-columns:repeat(3,1fr)}.productGrid{grid-template-columns:repeat(2,1fr)}.productPage{grid-template-columns:1fr}.detailImage{height:420px}.wishColumns,.mergedGrid,.accountPanel{grid-template-columns:1fr}.cartLayout,.payment{grid-template-columns:1fr}}@media(max-width:650px){.logo{font-size:22px;padding:4px}.accountWrap{display:none}.topbar{height:64px}.searchArea{max-width:none}.hero{min-height:500px}.heroVisual{display:none}.hero h1{font-size:40px}.section,.page{padding-left:16px;padding-right:16px}.categoryGrid,.productGrid{grid-template-columns:1fr 1fr}.productImageBtn{height:190px}.cartItem img{width:100px;height:100px}.orderBody{display:block}.timeline{margin-top:15px}.detailInfo h1{font-size:36px}footer{flex-direction:column;align-items:flex-start}}
 
-const categories = [
-  "Electronics","Kitchen Accessories","Plants","Fish Tank","Machinery Tools",
-  "Plastics","Medicine","Bike Accessories","Car Accessories","Food"
-];
+.topbar{min-height:78px;height:78px;gap:14px}.navItem small{font-size:12px;line-height:15px}.navItem strong,.cartNav strong{font-size:15px}.logo{font-size:30px}.flag{font-size:23px;display:inline-block}.hero{min-height:360px}.heroCopy{max-width:650px}.movingProducts{height:116px;background:#fff;border-bottom:1px solid #e2e7e9;display:flex;align-items:center;gap:22px;padding:0 32px;overflow:hidden}.movingLabel{min-width:115px;font-size:11px;letter-spacing:1.7px;font-weight:900;color:#6c7881}.movingTrack{display:flex;gap:12px;animation:gowebSlide 28s linear infinite;width:max-content}.movingTrack:hover{animation-play-state:paused}.movingProduct{width:225px;height:82px;border:1px solid #e2e7e9;background:#fff;border-radius:9px;padding:7px;display:flex;align-items:center;gap:10px;text-align:left;flex:none}.movingProduct img{width:68px;height:68px;border-radius:6px;object-fit:cover}.movingProduct span{min-width:0}.movingProduct small,.movingProduct b,.movingProduct strong{display:block}.movingProduct small{font-size:9px;color:#0a8a72;text-transform:uppercase}.movingProduct b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.movingProduct strong{font-size:13px;margin-top:4px}@keyframes gowebSlide{from{transform:translateX(0)}to{transform:translateX(-1185px)}}.accountPanel.expandedAccount{grid-template-columns:repeat(3,1fr)}.accountFeature{min-height:145px}.accountFeature button,.accountFeature a{border:0;background:none;padding:0;color:#087e69;font-size:12px;font-weight:800;text-decoration:none}@media(max-width:1000px){.movingLabel{display:none}.accountPanel.expandedAccount{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.topbar{height:68px;min-height:68px}.logo{font-size:25px}.movingProducts{height:102px}.movingProduct{width:205px;height:72px}.movingProduct img{width:56px;height:56px}.accountPanel.expandedAccount{grid-template-columns:1fr}}
 
-const products = [
-  {id:"123", name:"iPhone 15", category:"Electronics", price:69999, oldPrice:79999, rating:4.7, image:"https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=900&q=85", desc:"Powerful smartphone with a bright Super Retina display, excellent cameras and all-day battery life."},
-  {id:"124", name:"Sony Wireless Headphones", category:"Electronics", price:8999, oldPrice:11999, rating:4.5, image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85", desc:"Immersive wireless audio with comfortable earcups and long battery life."},
-  {id:"201", name:"Ceramic Kitchen Set", category:"Kitchen Accessories", price:2499, oldPrice:3299, rating:4.4, image:"https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=85", desc:"Modern everyday kitchen essentials designed for durable, convenient use."},
-  {id:"301", name:"Indoor Monstera Plant", category:"Plants", price:899, oldPrice:1199, rating:4.6, image:"https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=900&q=85", desc:"A lush indoor plant that adds a fresh, natural look to your living space."},
-  {id:"401", name:"Aqua Glass Fish Tank", category:"Fish Tank", price:3499, oldPrice:4299, rating:4.3, image:"https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=900&q=85", desc:"Clear aquarium tank for creating a beautiful home aquatic environment."},
-  {id:"501", name:"Cordless Power Drill", category:"Machinery Tools", price:4299, oldPrice:5499, rating:4.6, image:"https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=900&q=85", desc:"Compact cordless drill for home projects, repairs and workshop tasks."},
-  {id:"601", name:"Heavy Duty Storage Box", category:"Plastics", price:799, oldPrice:999, rating:4.2, image:"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=85", desc:"Stackable storage solution for keeping household items organised."},
-  {id:"701", name:"Wellness Essentials Pack", category:"Medicine", price:1299, oldPrice:1599, rating:4.5, image:"https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=85", desc:"A convenient collection of everyday wellness essentials."},
-  {id:"801", name:"Bike Phone Mount", category:"Bike Accessories", price:699, oldPrice:899, rating:4.4, image:"https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=85", desc:"Secure handlebar phone mount for navigation and hands-free riding."},
-  {id:"901", name:"Car Cleaning Kit", category:"Car Accessories", price:1199, oldPrice:1499, rating:4.6, image:"https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=900&q=85", desc:"Practical car-care kit for keeping your vehicle clean inside and out."},
-  {id:"1001", name:"Premium Snack Box", category:"Food", price:599, oldPrice:799, rating:4.3, image:"https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&w=900&q=85", desc:"A curated snack box for work breaks, travel and family sharing."}
-];
+.topbar{display:flex;align-items:center;flex-wrap:nowrap}.accountWrap,.ordersNav,.cartNav,.navDrop,.addressWrap{align-self:center}.accountWrap,.ordersNav,.cartNav{height:52px}.cartNav,.accountWrap,.ordersNav{flex-shrink:0}
 
-const addressesSeed = [
-  {id:1,label:"Home",text:"Adambakkam, Chennai, Tamil Nadu 600088",default:true},
-  {id:2,label:"Office",text:"Guindy, Chennai, Tamil Nadu 600032",default:false}
-];
+/* v5 bottom layout + delete actions */
+html,body,#root{min-height:100%;height:100%}
+body{min-height:100vh}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.app>main{flex:1}
+footer{margin-top:auto;min-height:82px;flex-shrink:0}
+.listActions,.mergeActions{display:flex;align-items:center;gap:10px;margin-top:8px}
+.deleteBtn{border:0;background:none;color:#c33b3b;padding:4px 0;font-size:12px;font-weight:800;cursor:pointer}
+.deleteBtn:hover{text-decoration:underline}
+.wishItem .listActions button,.mergedItem .mergeActions button{margin:0}
+.cartMain .deleteBtn{margin-top:8px}
 
-const STORAGE_KEY = "goweb-prototype-state-v12";
-const LEGACY_STORAGE_KEY = "goweb-prototype-state-v10";
-function loadGoWebState(){
-  try {
-    const current=JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(current) return current;
-    const legacy=JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
-    return legacy || {};
-  } catch(e) { return {}; }
-}
+/* v6 cart stability */
+.cartLayout{width:100%;min-height:240px}.cartItems{min-width:0}.summary{z-index:1}
 
-function normalizeCart(items){
-  const map = new Map();
-  (Array.isArray(items) ? items : []).filter(Boolean).forEach(item => {
-    const id = String(item.id);
-    const existing = map.get(id);
-    if(existing){ existing.quantity = Math.min(10, (Number(existing.quantity)||1) + (Number(item.quantity)||1)); }
-    else { map.set(id, {...item, quantity: Math.min(10, Math.max(1, Number(item.quantity)||1))}); }
-  });
-  return Array.from(map.values());
-}
 
-function QuantitySelect({value,onChange,className="quantitySelect",compact=false}){
-  return <label className={`quantityControl ${compact?"compact":""}`}><span>Quantity</span><select className={className} value={Number(value)||1} onChange={e=>onChange(Number(e.target.value))} aria-label="Quantity">{Array.from({length:10},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}</select></label>;
-}
+/* v8 product quantity controls */
+.quantityControl{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#44525a}.quantityControl select,.itemQuantity select{border:1px solid #ccd5da;background:#fff;border-radius:7px;padding:7px 9px;font-weight:700;cursor:pointer}.cardActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.listActions,.mergeActions{flex-wrap:wrap}.cartMain .listActions{margin-top:10px}.quantityControl select:focus{outline:2px solid #bfe8de;outline-offset:1px}
 
-function Icon({name, size=20}) {
-  const p = {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"1.8",strokeLinecap:"round",strokeLinejoin:"round"};
-  const paths = {
-    search:<><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
-    cart:<><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 8H6"/></>,
-    pin:<><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
-    user:<><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"/></>,
-    chevron:<path d="m6 9 6 6 6-6"/>,
-    back:<><path d="m15 18-6-6 6-6"/></>,
-    heart:<path d="M20.8 8.7c0 5.4-8.8 10.1-8.8 10.1S3.2 14.1 3.2 8.7A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.8 2.7Z"/>,
-    list:<><path d="M4 6h16M4 12h16M4 18h16"/></>,
-    orders:<><path d="M6 2h12v20H6z"/><path d="M9 6h6M9 10h6M9 14h4"/></>,
-    close:<><path d="m6 6 12 12M18 6 6 18"/></>,
-    plus:<><path d="M12 5v14M5 12h14"/></>,
-    check:<path d="m5 12 4 4L19 6"/>,
-    arrow:<path d="M5 12h14m-6-6 6 6-6 6"/>
-  };
-  return <svg {...p}>{paths[name]}</svg>;
-}
+.quantityControl{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#59656d;font-weight:700;white-space:nowrap}.quantityControl select{border:1px solid #ccd5da;border-radius:6px;background:#fff;padding:7px 22px 7px 8px;color:#17202a;font-size:12px}.cardActions .quantityControl{flex:0 0 auto}.cardActions .quantityControl span{display:none}.cardActions .listSelect{flex:1;min-width:105px;border:1px solid #ccd5da;border-radius:6px;padding:8px;background:#fff;font-size:12px}.itemActions{display:flex;align-items:center;gap:10px;margin-top:8px}.wishItemMain{flex:1;min-width:0}.wishItem .quantityControl span{display:inline}.mergedItem .itemActions{margin-top:10px}.cartControls{display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap}.cartControls strong{font-size:13px;color:#17202a}.cartItem{display:flex;gap:20px}.cartItem img{width:180px;height:180px;object-fit:cover;border-radius:9px}.cartMain{flex:1}.deleteBtn{border:0;background:none;color:#087e69;font-weight:800;padding:0}.detailInfo>.quantityControl{margin-top:10px}.detailInfo>.quantityControl span{font-size:13px}.detailInfo>.quantityControl select{padding:9px 28px 9px 10px}.detailActions{margin-top:18px}
 
-function Header({onNavigate, onSearch, addresses, setAddress, selectedAddress, cartCount}) {
-  const headerRef=React.useRef(null);
-  const [addressOpen,setAddressOpen]=useState(false);
-  const [allOpen,setAllOpen]=useState(false);
-  const [accountOpen,setAccountOpen]=useState(false);
-  const [langOpen,setLangOpen]=useState(false);
-  const [query,setQuery]=useState("");
-  React.useEffect(()=>{const close=e=>{if(headerRef.current&&!headerRef.current.contains(e.target)){setAddressOpen(false);setAllOpen(false);setAccountOpen(false);setLangOpen(false)}};document.addEventListener("mousedown",close);return()=>document.removeEventListener("mousedown",close)},[]);
+/* v10 quantity + list controls: intentionally visible on every product/list item */
+.cardActions .quantityControl{display:inline-flex !important;align-items:center;gap:6px;flex:0 0 auto;white-space:nowrap;}
+.cardActions .quantityControl span{display:inline !important;font-size:11px;color:#59656d;}
+.cardActions .quantityControl select{min-width:54px;padding:7px 20px 7px 8px;border:1px solid #ccd5da;border-radius:6px;background:#fff;}
+.itemActions .quantityControl{display:inline-flex !important;align-items:center;gap:6px;white-space:nowrap;}
+.itemActions .quantityControl span{display:inline !important;}
+.listActionBtn{border:0;background:#e4f7f2;color:#087b66;border-radius:6px;padding:8px 10px;font-weight:800;font-size:12px;}
+.listDelete{margin-left:2px !important;}
+.wishItem .itemActions,.mergedItem .itemActions{flex-wrap:wrap;}
 
-  const go = (v,p=null) => { setAddressOpen(false); setAllOpen(false); setAccountOpen(false); setLangOpen(false); onNavigate(v,p); };
+/* v11 multiple saved merged lists */
+.mergeModal{max-height:85vh;overflow:auto}.modalSectionTitle{font-size:13px;margin:20px 0 8px;color:#17202a}.savedMergeOptions{display:grid;gap:8px}.savedMergeOptions button{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #dbe2e5;background:#fff;padding:12px 14px;border-radius:8px;font-weight:800;text-align:left}.savedMergeOptions button:hover{border-color:#16a68b;background:#f3fbf9}.savedMergeOptions span{color:#087e69;font-size:12px}.savedMergeGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.savedMergeCard{background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:155px}.savedMergeCard h3{margin:7px 0}.savedMergeCard p{color:#68757d;font-size:13px}.savedMergeCardActions{display:flex;align-items:center;gap:14px;margin-top:16px}.savedMergeCardActions .deleteBtn{margin-left:auto}.pageTitle.split{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.pageTitle.split>div:first-child{min-width:0}@media(max-width:650px){.savedMergeGrid{grid-template-columns:1fr}.pageTitle.split{display:block}.pageTitle.split>.deleteBtn{margin-top:10px}}
 
-  const suggestions = useMemo(() => {
-    if(!query.trim()) return [];
-    const q=query.toLowerCase();
-    return products.filter(p => `${p.name} ${p.category}`.toLowerCase().includes(q)).slice(0,5);
-  },[query]);
-
-  return <header className="header" ref={headerRef}>
-    <div className="topbar">
-      <button className="logo" onClick={()=>go("home")}>Go<span>Web</span></button>
-
-      <div className="addressWrap">
-        <button className="navItem addressBtn" onClick={()=>setAddressOpen(v=>!v)}>
-          <Icon name="pin" size={22}/><div><small>Deliver to</small><strong>{selectedAddress.label}</strong></div><Icon name="chevron" size={15}/></button>
-        {addressOpen && <div className="popover addressPopover">
-          <div className="popTitle">Choose a delivery address</div>
-          {addresses.map(a=><button className={"addressChoice "+(a.id===selectedAddress.id?"selected":"")} key={a.id} onClick={()=>{setAddress(a);setAddressOpen(false)}}><div><b>{a.label}</b>{a.default&&<span className="pill">DEFAULT</span>}<p>{a.text}</p></div>{a.id===selectedAddress.id&&<Icon name="check" size={19}/>}</button>)}
-          <button className="addAddress" onClick={()=>{const text=prompt("Enter the new delivery address"); if(text){setAddress({...selectedAddress,id:Date.now(),label:"New Address",text,default:false}); setAddressOpen(false)}}}><Icon name="plus" size={17}/> Add a new address</button>
-        </div>}
-      </div>
-
-      <div className="searchArea">
-        <button className="allBtn" onClick={()=>setAllOpen(v=>!v)}>All <Icon name="chevron" size={14}/></button>
-        <input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==="Enter"&&onSearch(query)} placeholder="Search GoWeb" />
-        <button className="searchBtn" onClick={()=>onSearch(query)}><Icon name="search" size={21}/></button>
-        {allOpen && <div className="popover categoryPopover">
-          <div className="popTitle">Shop by category</div>
-          {categories.map(c=><button key={c} onClick={()=>{go("category",c);setAllOpen(false)}}>{c}</button>)}
-        </div>}
-        {!!suggestions.length && <div className="suggestions">{suggestions.map(p=><button key={p.id} onClick={()=>{go("product",p.id);setQuery("")}}><img src={p.image}/><span>{p.name}<small>{p.category}</small></span></button>)}</div>}
-      </div>
-
-      <div className="navDrop">
-        <button className="navItem langBtn" onClick={()=>setLangOpen(v=>!v)}><span className="flag">🇮🇳</span><strong>EN</strong><Icon name="chevron" size={14}/></button>
-        {langOpen&&<div className="popover langPopover">{["English","हिन्दी","தமிழ்","తెలుగు","বাংলা","मराठी","ગુજરાતી","ಕನ್ನಡ","മലയാളം","ਪੰਜਾਬੀ","اردو"].map(l=><button key={l} onClick={()=>setLangOpen(false)}>🇮🇳 {l}</button>)}</div>}
-      </div>
-
-      <div className="accountWrap">
-        <button className="navItem textNav" onClick={()=>setAccountOpen(v=>!v)}><div><small>Hello, Roshan</small><strong>Account & Lists</strong></div><Icon name="chevron" size={14}/></button>
-        {accountOpen&&<div className="popover accountPopover">
-          <div className="accountCols">
-            <div><h4>List</h4><button onClick={()=>{go("wishlist");setAccountOpen(false)}}>Wishlist</button><button onClick={()=>{go("merge");setAccountOpen(false)}}>Merge List</button></div>
-            <div><h4>Account</h4><button onClick={()=>{go("account");setAccountOpen(false)}}>Your Account</button><button onClick={()=>setAccountOpen(false)}>Sign out</button></div>
-          </div>
-        </div>}
-      </div>
-
-      <button className="navItem ordersNav" onClick={()=>go("orders")}><div><small>Returns</small><strong>& Orders</strong></div></button>
-      <button className="cartNav" onClick={()=>go("cart")}><span className="cartIcon"><Icon name="cart" size={29}/><b>{cartCount}</b></span><strong>Cart</strong></button>
-    </div>
-  </header>
-}
-
-function ProductCard({p,onProduct,onCart,onWish,onWishlist}) {
-  const [wish,setWish]=useState("");
-  const [quantity,setQuantity]=useState(1);
-  return <article className="productCard">
-    <button className="productImageBtn" onClick={()=>onProduct(p.id)}><img src={p.image} alt={p.name}/></button>
-    <div className="productInfo">
-      <div className="rating">★ {p.rating} <span>·</span> {Math.floor(p.rating*1000)} ratings</div>
-      <button className="productName" onClick={()=>onProduct(p.id)}>{p.name}</button>
-      <div className="price">₹{p.price.toLocaleString("en-IN")} <del>₹{p.oldPrice.toLocaleString("en-IN")}</del></div>
-      <div className="delivery">FREE Delivery</div>
-      <div className="cardActions">
-        <QuantitySelect value={quantity} onChange={setQuantity}/>
-        <select className="listSelect" value={wish} onChange={e=>{setWish(e.target.value);if(e.target.value){onWish(p,e.target.value);onWishlist&&onWishlist()}}} aria-label="Add to wishlist">
-          <option value="">Add to List</option><option>Wishlist A</option><option>Wishlist B</option><option>Wishlist C</option>
-        </select>
-        <button type="button" className="miniCart" onClick={(e)=>{e.preventDefault();e.stopPropagation();onCart(p,quantity,true)}}>Add to Cart</button>
-      </div>
-    </div>
-  </article>
-}
-
-function Home({onNavigate,onCart,onWish}) {
-  return <main>
-    <section className="hero">
-      <div className="heroCopy"><span className="eyebrow">GO FURTHER. SHOP SMARTER.</span><h1>Everything you need.<br/><em>One GoWeb.</em></h1><p>Discover products across India, from everyday essentials to specialist tools.</p></div>
-      <div className="heroVisual"><div className="heroCircle">Go<span>Web</span></div><div className="floatingCard">⚡ Today’s picks<br/><b>Up to 30% off</b></div></div>
-    </section>
-    <section className="movingProducts"><div className="movingLabel">TRENDING NOW</div><div className="movingTrack">{[...products.slice(0,5),...products.slice(0,5)].map((p,i)=><button className="movingProduct" key={p.id+i} onClick={()=>onNavigate("product",p.id)}><img src={p.image}/><span><small>{p.category}</small><b>{p.name}</b><strong>₹{p.price.toLocaleString("en-IN")}</strong></span></button>)}</div></section>
-    <section className="section">
-      <div className="sectionHead"><div><span className="eyebrow">EXPLORE</span><h2>Shop by category</h2></div></div>
-      <div className="categoryGrid">{categories.map((c,i)=><button key={c} onClick={()=>onNavigate("category",c)}><span className="categoryIcon">{["📱","🍳","🌿","🐠","🛠️","📦","💊","🏍️","🚗","🍱"][i]}</span><b>{c}</b><span>Shop now →</span></button>)}</div>
-    </section>
-    <section className="section featured"><div className="sectionHead"><div><span className="eyebrow">FEATURED</span><h2>Popular across GoWeb</h2></div><button className="linkBtn" onClick={()=>onNavigate("category","Electronics")}>See all →</button></div>
-      <div className="productGrid">{products.map(p=><ProductCard key={p.id} p={p} onProduct={id=>onNavigate("product",id)} onCart={onCart} onWish={onWish} onWishlist={()=>onNavigate("wishlist")}/>)}</div>
-    </section>
-  </main>
-}
-
-function Category({category,onNavigate,onCart,onWish}) {
-  const list=products.filter(p=>p.category===category);
-  return <main className="page"><button className="backBtn" onClick={()=>onNavigate("home")}><Icon name="back" size={18}/> Back to GoWeb</button><div className="pageTitle"><span className="eyebrow">CATEGORY</span><h1>{category}</h1><p>{list.length} product{list.length!==1?"s":""} available</p></div>
-    <div className="productGrid">{list.map(p=><ProductCard key={p.id} p={p} onProduct={id=>onNavigate("product",id)} onCart={onCart} onWish={onWish} onWishlist={()=>onNavigate("wishlist")}/>)}</div>
-  </main>
-}
-
-function ProductPage({p,onBack,onCart}) {
-  const [quantity,setQuantity]=useState(1);
-  return <main className="page"><button className="backBtn" onClick={onBack}><Icon name="back" size={18}/> Back</button><div className="productPage">
-    <div className="detailImage"><img src={p.image} alt={p.name}/></div>
-    <div className="detailInfo"><span className="eyebrow">{p.category}</span><h1>{p.name}</h1><div className="bigRating">★ {p.rating} <span>· 1,240 ratings</span></div><p className="detailDesc">{p.desc}</p><div className="detailPrice">₹{p.price.toLocaleString("en-IN")} <del>₹{p.oldPrice.toLocaleString("en-IN")}</del></div><p className="delivery"><b>FREE Delivery</b> · In stock</p><QuantitySelect value={quantity} onChange={setQuantity}/><div className="detailActions"><button className="primary" onClick={()=>onCart(p,quantity,true)}>Add to Cart</button><button className="secondary" onClick={()=>onCart(p,quantity,true)}>Buy Now</button></div><div className="trust">✓ Secure payments &nbsp; ✓ Easy returns &nbsp; ✓ Genuine products</div></div>
-  </div></main>
-}
-
-function Wishlist({wishlists,setWishlists,mergedLists,setMergedLists,mergedContents,setMergedContents,onNavigate,onCart}) {
-  const [mergeOpen,setMergeOpen]=useState(false);
-
-  const createMerge=(a,b)=>{
-    const key=a+b;
-    const ids=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
-    setMergedContents(m=>({...m,[key]:ids}));
-    setMergedLists(m=>[...new Set([...(Array.isArray(m)?m:[]),key])]);
-    setMergeOpen(false);
-    onNavigate("merge",key);
-  };
-
-  return <main className="page"><div className="pageTitle split"><div><span className="eyebrow">YOUR LISTS</span><h1>Wishlist</h1></div><button className="primary small" onClick={()=>setMergeOpen(true)}>Merge List</button></div>
-    <div className="wishColumns">{["A","B","C"].map(k=><section className="wishCol" key={k}><h3>Wishlist {k}</h3><div className="wishItems">{(wishlists[k]||[]).length?wishlists[k].map(id=>{const p=products.find(x=>x.id===id);if(!p)return null;return <WishlistItem key={id} p={p} onCart={onCart} setWishlists={setWishlists} listKey={k}/>;}):<p className="empty">No products in this list.</p>}</div></section>)}</div>
-    {mergeOpen&&<div className="modalShade"><div className="modal"><button className="close" onClick={()=>setMergeOpen(false)}><Icon name="close"/></button><h2>Merge List</h2><p>Choose two wishlists to combine. Duplicate product IDs will be shown only once.</p><div className="mergeOptions">{[["A","B"],["A","C"],["B","C"]].map(([a,b])=><button key={a+b} onClick={()=>createMerge(a,b)}>Wishlist {a} + Wishlist {b}<Icon name="arrow" size={18}/></button>)}</div></div></div>}
-  </main>
-}
-
-function WishlistItem({p,onCart,setWishlists,listKey}){
-  const [quantity,setQuantity]=useState(1);
-  const add=()=>{setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>String(id)!==String(p.id))}));onCart(p,quantity,true)};
-  const remove=()=>setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>String(id)!==String(p.id))}));
-  return <div className="wishItem"><img src={p.image} alt={p.name}/><div className="wishItemMain"><b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button className="listActionBtn" onClick={add}>Add to Cart</button><button className="deleteBtn listDelete" onClick={remove}>Delete</button></div></div></div>;
-}
-
-function Merge({pair,wishlists,setWishlists,mergedLists,setMergedLists,mergedContents,setMergedContents,onNavigate,onCart}){
-  const savedMerges=Array.isArray(mergedLists)?mergedLists:[];
-  const requestedPair=typeof pair==="string"&&pair.length>=2?pair:null;
-  const selectedPair=requestedPair&&savedMerges.includes(requestedPair)?requestedPair:(savedMerges.length?savedMerges[savedMerges.length-1]:null);
-  const a=selectedPair?selectedPair[0]:null;
-  const b=selectedPair?selectedPair[1]:null;
-  const ids=selectedPair?[...new Set((mergedContents&&mergedContents[selectedPair])||[])]:[];
-
-  const removeFromMerge=id=>{
-    if(!selectedPair)return;
-    const remaining=(mergedContents[selectedPair]||[]).filter(x=>String(x)!==String(id));
-    if(remaining.length){
-      setMergedContents(m=>({...m,[selectedPair]:remaining}));
-    }else{
-      setMergedContents(m=>{const next={...m};delete next[selectedPair];return next});
-      const remainingMerges=savedMerges.filter(k=>k!==selectedPair);
-      setMergedLists(remainingMerges);
-      onNavigate("merge",remainingMerges.length?remainingMerges[remainingMerges.length-1]:null);
-    }
-  };
-
-  const addMergedItemToCart=p=>{removeFromMerge(p.id);onCart(p,1,true)};
-
-  return <main className="page">
-    <section className="savedMerges mergeWindowLists">
-      <div className="sectionHead"><div><span className="eyebrow">SAVED MERGE LISTS</span><h2>Your Merged Lists</h2><p>Each merge is saved independently from Wishlist A, B and C.</p></div></div>
-      {savedMerges.length?<div className="mergeHistory">{savedMerges.map(key=>{
-        const previewIds=[...new Set((mergedContents&&mergedContents[key])||[])].slice(0,4);
-        const previewProducts=previewIds.map(id=>products.find(p=>String(p.id)===String(id))).filter(Boolean);
-        return <button className={"savedMergeCard "+(key===selectedPair?"active":"")} key={key} onClick={()=>onNavigate("merge",key)}>
-          <div className="savedMergeImages">{previewProducts.length?previewProducts.map(p=><img key={p.id} src={p.image} alt={p.name}/>):<div className="savedMergePlaceholder">No products</div>}</div>
-          <b>Wishlist {key[0]} + Wishlist {key[1]}</b>
-          <span>{key===selectedPair?"Currently open":"Open merged list →"}</span>
-        </button>;
-      })}</div>:<div className="noMergedLists"><h3>No Merged lists</h3><p>No merge lists have been created yet. Go to Wishlist and choose two lists to create a merge.</p></div>}
-    </section>
-
-    {selectedPair?<>
-      <button className="backBtn" onClick={()=>onNavigate("wishlist")}><Icon name="back" size={18}/> Back to Wishlist</button>
-      <div className="pageTitle"><span className="eyebrow">MERGED LIST</span><h1>Wishlist {a} + Wishlist {b}</h1><p>{ids.length} unique product{ids.length!==1?"s":""} · duplicates automatically removed by Product ID</p></div>
-      {ids.length?<div className="mergedGrid">{ids.map(id=>{const p=products.find(x=>String(x.id)===String(id));if(!p)return null;return <MergedItem key={id} p={p} onCart={addMergedItemToCart} onDelete={()=>removeFromMerge(p.id)}/>})}</div>:<div className="emptyPanel"><h2>This Merge List is empty</h2><p>When all products are removed, this merge option is automatically removed from Your Merged Lists.</p><button className="primary" onClick={()=>onNavigate("wishlist")}>Back to Wishlist</button></div>}
-    </>:<div className="emptyPanel mergeEmptyState"><h2>No Merged lists</h2><p>Create a merge from Wishlist A+B, A+C, or B+C. Your saved merge lists will appear here.</p><button className="primary" onClick={()=>onNavigate("wishlist")}>Go to Wishlist</button></div>}
-  </main>
-}
-
-function MergedItem({p,onCart,onDelete}){
-  const [quantity,setQuantity]=useState(1);
-  return <div className="mergedItem"><img src={p.image} alt={p.name}/><div><span className="sku">Product ID: {p.id}</span><h3>{p.name}</h3><b>₹{p.price.toLocaleString("en-IN")}</b><div className="itemActions"><QuantitySelect value={quantity} onChange={setQuantity}/><button className="miniCart" onClick={()=>onCart(p,quantity)}>Add to Cart</button><button className="deleteBtn listDelete" onClick={onDelete}>Delete</button></div></div></div>;
-}
-
-function Orders() {
-  const orders=[["GW-20260901-124","iPhone 15","₹69,999","Delivered"],["GW-20260825-911","Cordless Power Drill","₹4,299","Shipped"],["GW-20260817-402","Premium Snack Box","₹599","Cancelled"]];
-  return <main className="page"><div className="pageTitle"><span className="eyebrow">PURCHASE HISTORY</span><h1>Your Orders</h1></div><div className="orders">{orders.map(o=><div className="order" key={o[0]}><div className="orderTop"><b>Order {o[0]}</b><span>{o[3]}</span></div><div className="orderBody"><div><h3>{o[1]}</h3><p>{o[2]}</p></div><div className="timeline"><i className={o[3]!=="Cancelled"?"done":""}>Ordered</i><i className={["Shipped","Delivered"].includes(o[3])?"done":""}>Shipped</i><i className={o[3]==="Delivered"?"done":""}>Delivered</i></div></div></div>)}</div></main>
-}
-
-function Cart({cart,onRemove,onQuantityChange,onNavigate,onPay}) {
-  const safeCart=Array.isArray(cart)?cart.filter(Boolean):[];
-  const total=safeCart.reduce((s,p)=>s+(Number(p.price)||0)*(Number(p.quantity)||1),0);
-  const totalUnits=safeCart.reduce((s,p)=>s+(Number(p.quantity)||1),0);
-  return <main className="page"><div className="pageTitle"><span className="eyebrow">YOUR BAG</span><h1>Shopping Cart</h1><p>{safeCart.length} unique item{safeCart.length!==1?"s":""} · {totalUnits} unit{totalUnits!==1?"s":""}</p></div>{safeCart.length?<div className="cartLayout"><div className="cartItems">{safeCart.map(p=><div className="cartItem" key={p.id}><img src={p.image}/><div className="cartMain"><h3>{p.name}</h3><p>{p.desc}</p><b>₹{p.price.toLocaleString("en-IN")} each</b><div className="cartControls"><QuantitySelect value={Number(p.quantity)||1} onChange={q=>onQuantityChange(p.id,q)}/><strong>Item total: ₹{((Number(p.price)||0)*(Number(p.quantity)||1)).toLocaleString("en-IN")}</strong><button className="deleteBtn" onClick={()=>onRemove(p.id)}>Delete</button></div></div></div>)}</div><aside className="summary"><span>Subtotal</span><h2>₹{total.toLocaleString("en-IN")}</h2><p>FREE delivery available</p><button className="primary" onClick={()=>onPay()}>Proceed to pay</button></aside></div>:<div className="emptyPanel"><div className="emptyIcon">🛒</div><h2>Your cart is empty</h2><button className="primary" onClick={()=>onNavigate("home")}>Continue shopping</button></div>}</main>
-}
-
-function Payment({total,onNavigate}) {
-  const [method,setMethod]=useState("UPI");
-  return <main className="page narrow"><button className="backBtn" onClick={()=>onNavigate("cart")}><Icon name="back" size={18}/> Back to cart</button><div className="pageTitle"><span className="eyebrow">CHECKOUT</span><h1>Payment</h1></div><div className="payment"><div><h3>Pay securely</h3>{["UPI","Card (Debit or Credit)","Net Banking","Cash on Delivery"].map(m=><button className={"payMethod "+(method===m?"active":"")} key={m} onClick={()=>setMethod(m)}><span>{method===m?"●":"○"}</span>{m}</button>)}{method==="UPI"&&<input placeholder="Enter UPI ID (e.g. name@bank)"/>}{method.startsWith("Card")&&<><input placeholder="Card number"/><div className="two"><input placeholder="MM / YY"/><input placeholder="CVV"/></div></>}{method==="Net Banking"&&<select><option>Select your bank</option><option>HDFC Bank</option><option>ICICI Bank</option><option>SBI</option><option>Axis Bank</option></select>}</div><aside className="summary"><span>Total payable</span><h2>₹{total.toLocaleString("en-IN")}</h2><button className="primary" onClick={()=>alert("Demo payment successful! Order placed.")}>Place order</button></aside></div></main>
-}
-
-function Account(){const links=[["Your Orders","Track, return or review purchases"],["Contact Us","Get help with orders and GoWeb services"],["GoWeb Pay Balance","View your available wallet balance"],["Payment Options","Manage UPI, cards and net banking"],["Delivery Addresses","Add or update saved delivery locations"],["Login & Security","Manage email, password and account security"],["Request your data","Request a copy of your personal data","https://www.amazon.in/hz/privacy-central/data-requests/preview.html"],["Data Access and Requests","Review data access and privacy requests","https://www.amazon.in/privacy-center/data-access"],["Manage apps and services with data access","Control connected apps and services","https://www.amazon.in/ap/adam?ref_=ya_d_l_iba"],["Close Your Amazon Account","Data deletion and account closure","https://www.amazon.in/privacy/data-deletion"],["Privacy Notice","Read the privacy notice","https://www.amazon.in/gp/help/customer/display.html?nodeId=201909010"]];return <main className="page"><div className="pageTitle"><span className="eyebrow">ACCOUNT</span><h1>Your Account</h1><p>Manage your GoWeb profile, payments, orders and data.</p></div><div className="accountPanel expandedAccount"><div className="accountIdentity"><Icon name="user" size={30}/><h3>Roshan</h3><p>Welcome back. Manage your GoWeb account from one place.</p></div>{links.map(([title,desc,url])=><div className="accountFeature" key={title}><b>{title}</b><p>{desc}</p>{url?<a href={url} target="_blank" rel="noreferrer">Open privacy page →</a>:<button>Manage →</button>}</div>)}</div></main>}
-
-export default function App(){
-  const [view,setView]=useState("home");
-  const [param,setParam]=useState(null);
-  const saved=React.useMemo(()=>loadGoWebState(),[]);
-  const [addresses,setAddresses]=useState(saved.addresses||addressesSeed);
-  const [selectedAddress,setSelectedAddress]=useState(saved.selectedAddress||((saved.addresses||addressesSeed)[0]));
-  const [cart,setCart]=useState(()=>normalizeCart(saved.cart||[]));
-  const [wishlists,setWishlists]=useState(()=>({A:["123","201"],B:["123","501"],C:["301"],...(saved.wishlists||{})}));
-  const initialMergedContents=saved.mergedContents&&typeof saved.mergedContents==="object"?saved.mergedContents:{};
-  const initialMergedLists=Array.isArray(saved.mergedLists)?[...new Set(saved.mergedLists)]:Object.keys(initialMergedContents);
-  const [mergedLists,setMergedLists]=useState(initialMergedLists);
-  const [mergedContents,setMergedContents]=useState(initialMergedContents);
-
-  React.useEffect(()=>{
-    if(initialMergedLists.length===0)return;
-    setMergedContents(prev=>{
-      const next={...prev};
-      initialMergedLists.forEach(key=>{
-        if(!Array.isArray(next[key])){
-          const a=key[0],b=key[1];
-          next[key]=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
-        }
-      });
-      return next;
-    });
-  },[]);
-
-  const navigate=(v,p=null)=>{setView(v);setParam(p);window.scrollTo({top:0,behavior:"smooth"})};
-  const addCart=(p,quantity=1,buyNow=false)=>{
-    if(!p)return;
-    const qty=Math.min(10,Math.max(1,Number(quantity)||1));
-    setCart(c=>{
-      const next=normalizeCart(c);
-      const index=next.findIndex(item=>String(item.id)===String(p.id));
-      if(index>=0)next[index]={...next[index],quantity:Math.min(10,(Number(next[index].quantity)||1)+qty)};
-      else next.push({...p,quantity:qty});
-      return next;
-    });
-    navigate("cart");
-  };
-  const addWish=(p,list)=>setWishlists(w=>{const k=list[list.length-1];return {...w,[k]:[...new Set([...(w[k]||[]),p.id])]}});
-  const removeCart=id=>setCart(c=>c.filter(p=>String(p.id)!==String(id)));
-  const updateCartQuantity=(id,quantity)=>setCart(c=>c.map(p=>String(p.id)===String(id)?{...p,quantity:Math.min(10,Math.max(1,Number(quantity)||1))}:p));
-  const total=cart.reduce((s,p)=>s+(Number(p.price)||0)*(Number(p.quantity)||1),0);
-
-  React.useEffect(()=>{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({addresses,selectedAddress,cart,wishlists,mergedLists,mergedContents}));
-  },[addresses,selectedAddress,cart,wishlists,mergedLists,mergedContents]);
-
-  const search=q=>{const p=products.find(x=>`${x.name} ${x.category}`.toLowerCase().includes(q.toLowerCase()));if(p)navigate("product",p.id);else if(q)alert(`No demo product found for "${q}"`)};
-
-  return <div className="app">
-    <Header onNavigate={navigate} onSearch={search} addresses={addresses} setAddress={a=>{setSelectedAddress(a);setAddresses(xs=>xs.some(x=>x.id===a.id)?xs:[...xs,a])}} selectedAddress={selectedAddress} cartCount={cart.reduce((s,p)=>s+(Number(p.quantity)||1),0)}/>
-    {view==="home"&&<Home onNavigate={navigate} onCart={addCart} onWish={addWish}/>} 
-    {view==="category"&&<Category category={param} onNavigate={navigate} onCart={addCart} onWish={addWish}/>} 
-    {view==="product"&&<ProductPage p={products.find(p=>p.id===param)||products[0]} onBack={()=>navigate("home")} onCart={addCart}/>} 
-    {view==="wishlist"&&<Wishlist wishlists={wishlists} setWishlists={setWishlists} mergedLists={mergedLists} setMergedLists={setMergedLists} mergedContents={mergedContents} setMergedContents={setMergedContents} onNavigate={navigate} onCart={addCart}/>} 
-    {view==="merge"&&<Merge pair={param} wishlists={wishlists} setWishlists={setWishlists} mergedLists={mergedLists} setMergedLists={setMergedLists} mergedContents={mergedContents} setMergedContents={setMergedContents} onNavigate={navigate} onCart={addCart}/>} 
-    {view==="orders"&&<Orders/>} 
-    {view==="cart"&&<Cart cart={cart} onRemove={removeCart} onQuantityChange={updateCartQuantity} onNavigate={navigate} onPay={()=>navigate("payment")}/>} 
-    {view==="payment"&&<Payment total={total} onNavigate={navigate}/>} 
-    {view==="account"&&<Account/>} 
-    <footer><b>Go<span>Web</span></b><span>Shop across India · Built as a functional prototype</span><span>© 2026 GoWeb</span></footer>
-  </div>
-}
+/* Saved Merge List preview cards */
+.mergeHistory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:38px}
+.savedMergeCard{width:100%;background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:9px;min-height:190px;transition:.2s;box-shadow:0 2px 8px #00000008}
+.savedMergeCard:hover,.savedMergeCard.active{border-color:#18a98d;box-shadow:0 8px 24px #00000010}
+.savedMergeCard b{font-size:14px;color:#17202a}
+.savedMergeCard>span{font-size:12px;color:#087e69;font-weight:700}
+.savedMergeImages{display:flex;gap:7px;height:105px;overflow:hidden;align-items:center}
+.savedMergeImages img{width:82px;height:82px;object-fit:cover;border-radius:8px;border:1px solid #e1e6e9;background:#f3f5f6;flex:0 0 auto}
+.savedMergePlaceholder{width:82px;height:82px;border-radius:8px;background:#f3f5f6;color:#7b858c;font-size:11px;display:flex;align-items:center;justify-content:center;text-align:center}
+.noMergedLists{background:#fff;border:1px dashed #cdd6db;border-radius:12px;padding:28px;text-align:center;margin-bottom:38px}
+.noMergedLists h3{margin:0 0 6px}
+.noMergedLists p{margin:0;color:#6c7881;font-size:13px}
+@media(max-width:1000px){.mergeHistory{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.mergeHistory{grid-template-columns:1fr}.savedMergeImages{height:90px}.savedMergeImages img,.savedMergePlaceholder{width:70px;height:70px}}
