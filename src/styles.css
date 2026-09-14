@@ -37,3 +37,18 @@ footer{margin-top:auto;min-height:82px;flex-shrink:0}
 
 /* v11 multiple saved merged lists */
 .mergeModal{max-height:85vh;overflow:auto}.modalSectionTitle{font-size:13px;margin:20px 0 8px;color:#17202a}.savedMergeOptions{display:grid;gap:8px}.savedMergeOptions button{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #dbe2e5;background:#fff;padding:12px 14px;border-radius:8px;font-weight:800;text-align:left}.savedMergeOptions button:hover{border-color:#16a68b;background:#f3fbf9}.savedMergeOptions span{color:#087e69;font-size:12px}.savedMergeGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.savedMergeCard{background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:155px}.savedMergeCard h3{margin:7px 0}.savedMergeCard p{color:#68757d;font-size:13px}.savedMergeCardActions{display:flex;align-items:center;gap:14px;margin-top:16px}.savedMergeCardActions .deleteBtn{margin-left:auto}.pageTitle.split{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.pageTitle.split>div:first-child{min-width:0}@media(max-width:650px){.savedMergeGrid{grid-template-columns:1fr}.pageTitle.split{display:block}.pageTitle.split>.deleteBtn{margin-top:10px}}
+
+/* Saved Merge List preview cards */
+.mergeHistory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:38px}
+.savedMergeCard{width:100%;background:#fff;border:1px solid #e0e5e8;border-radius:12px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:9px;min-height:190px;transition:.2s;box-shadow:0 2px 8px #00000008}
+.savedMergeCard:hover,.savedMergeCard.active{border-color:#18a98d;box-shadow:0 8px 24px #00000010}
+.savedMergeCard b{font-size:14px;color:#17202a}
+.savedMergeCard>span{font-size:12px;color:#087e69;font-weight:700}
+.savedMergeImages{display:flex;gap:7px;height:105px;overflow:hidden;align-items:center}
+.savedMergeImages img{width:82px;height:82px;object-fit:cover;border-radius:8px;border:1px solid #e1e6e9;background:#f3f5f6;flex:0 0 auto}
+.savedMergePlaceholder{width:82px;height:82px;border-radius:8px;background:#f3f5f6;color:#7b858c;font-size:11px;display:flex;align-items:center;justify-content:center;text-align:center}
+.noMergedLists{background:#fff;border:1px dashed #cdd6db;border-radius:12px;padding:28px;text-align:center;margin-bottom:38px}
+.noMergedLists h3{margin:0 0 6px}
+.noMergedLists p{margin:0;color:#6c7881;font-size:13px}
+@media(max-width:1000px){.mergeHistory{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.mergeHistory{grid-template-columns:1fr}.savedMergeImages{height:90px}.savedMergeImages img,.savedMergePlaceholder{width:70px;height:70px}}
