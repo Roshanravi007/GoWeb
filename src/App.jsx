@@ -163,171 +163,27 @@ function ProductPage({p,onBack,onCart}) {
   </div></main>
 }
 
-function Wishlist({wishlists,setWishlists,mergedLists,setMergedLists,mergedContents,setMergedContents,onNavigate,onCart}) {
+function Wishlist({wishlists,setWishlists,onNavigate,onCart}) {
   const [mergeOpen,setMergeOpen]=useState(false);
-
-  const addWishlistItemToCart=(p,listKey)=>{
-    setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>id!==p.id)}));
-    onCart(p,true);
-  };
-
-  const deleteWishlistItem=(id,listKey)=>{
-    setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(x=>x!==id)}));
-  };
-
-  const createMerge=(a,b)=>{
-    const key=a+b;
-    const ids=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
-    setMergedContents(m=>({...m,[key]:ids}));
-    setMergedLists(m=>[...new Set([...(m||[]),key])]);
-    setMergeOpen(false);
-    onNavigate("merge",key);
-  };
-
-  return <main className="page">
-    <div className="pageTitle split">
-      <div><span className="eyebrow">YOUR LISTS</span><h1>Wishlist</h1></div>
-      <button className="primary small" onClick={()=>setMergeOpen(true)}>Merge List</button>
-    </div>
-
-    <div className="wishColumns">
-      {["A","B","C"].map(k=><section className="wishCol" key={k}>
-        <h3>Wishlist {k}</h3>
-        <div className="wishItems">
-          {(wishlists[k]||[]).length ? (wishlists[k]||[]).map(id=>{
-            const p=products.find(x=>x.id===id); if(!p) return null;
-            return <div className="wishItem" key={id}>
-              <img src={p.image} alt={p.name}/>
-              <div>
-                <b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span>
-                <div className="listActions">
-                  <button onClick={()=>addWishlistItemToCart(p,k)}>Add to Cart</button>
-                  <button className="deleteBtn" onClick={()=>deleteWishlistItem(p.id,k)}>Delete</button>
-                </div>
-              </div>
-            </div>
-          }) : <p className="empty">No products in this list.</p>}
-        </div>
-      </section>)}
-    </div>
-
-    {mergeOpen&&<div className="modalShade"><div className="modal">
-      <button className="close" onClick={()=>setMergeOpen(false)}><Icon name="close"/></button>
-      <h2>Create Merge List</h2>
-      <p>Choose two wishlists to combine. Duplicate Product IDs are automatically removed.</p>
-      <div className="mergeOptions">
-        {[["A","B"],["A","C"],["B","C"]].map(([a,b])=>
-          <button key={a+b} onClick={()=>createMerge(a,b)}>Wishlist {a} + Wishlist {b}<Icon name="arrow" size={18}/></button>
-        )}
-      </div>
-    </div></div>}
+  const addWishlistItemToCart=(p,listKey)=>{ setWishlists(w=>({...w,[listKey]:(w[listKey]||[]).filter(id=>id!==p.id)})); onCart(p,true); };
+  const move=(id,list)=>setWishlists(w=>({...w,[list]:[...new Set([...w[list],id])]}));
+  return <main className="page"><div className="pageTitle split"><div><span className="eyebrow">YOUR LISTS</span><h1>Wishlist</h1></div><button className="primary small" onClick={()=>setMergeOpen(true)}>Merge List</button></div>
+    <div className="wishColumns">{["A","B","C"].map(k=><section className="wishCol" key={k}><h3>Wishlist {k}</h3><div className="wishItems">{wishlists[k].length?<>{wishlists[k].map(id=>{const p=products.find(x=>x.id===id);return <div className="wishItem" key={id}><img src={p.image}/><div><b>{p.name}</b><span>₹{p.price.toLocaleString("en-IN")}</span><button onClick={()=>onCart(p,true)}>Add to Cart</button></div></div>})}</>:<p className="empty">No products in this list.</p>}</div></section>)}</div>
+    {mergeOpen&&<div className="modalShade"><div className="modal"><button className="close" onClick={()=>setMergeOpen(false)}><Icon name="close"/></button><h2>Merge List</h2><p>Choose two wishlists to combine. Duplicate product IDs will be shown only once.</p><div className="mergeOptions">{[["A","B"],["A","C"],["B","C"]].map(([a,b])=><button key={a+b} onClick={()=>{setMergeOpen(false);onNavigate("merge",a+b)}}>Wishlist {a} + Wishlist {b}<Icon name="arrow" size={18}/></button>)}</div></div></div>}
   </main>
 }
 
-function Merge({pair,wishlists,setWishlists,mergedLists,setMergedLists,mergedContents,setMergedContents,onNavigate,onCart}) {
-  const savedMerges=Array.isArray(mergedLists)?mergedLists:[];
-  const requestedPair=typeof pair==="string" && pair.length>=2 ? pair : null;
-  const selectedPair=requestedPair && savedMerges.includes(requestedPair)
-    ? requestedPair
-    : (savedMerges.length ? savedMerges[savedMerges.length-1] : null);
-
-  const a=selectedPair ? selectedPair[0] : null;
-  const b=selectedPair ? selectedPair[1] : null;
-  const ids=selectedPair
-    ? [...new Set((mergedContents&&mergedContents[selectedPair]) || [])]
-    : [];
-
-  const removeFromMerge=(id)=>{
-    if(!selectedPair) return;
-    const current=[...(mergedContents?.[selectedPair]||[])];
-    const remaining=current.filter(x=>x!==id);
-
-    if(remaining.length){
-      setMergedContents(m=>({...m,[selectedPair]:remaining}));
-    } else {
-      const remainingMerges=savedMerges.filter(k=>k!==selectedPair);
-      setMergedContents(m=>{
-        const next={...m};
-        delete next[selectedPair];
-        return next;
-      });
-      setMergedLists(remainingMerges);
-      if(remainingMerges.length){
-        onNavigate("merge",remainingMerges[remainingMerges.length-1]);
-      } else {
-        // Stay in the Merge List window, which now correctly shows
-        // "No Merged lists" instead of falling back to Wishlist A+B.
-        onNavigate("merge",null);
-      }
-    }
-  };
-
+function Merge({pair,wishlists,setWishlists,onNavigate,onCart}) {
+  const selectedPair=typeof pair==="string" && pair.length>=2 ? pair : "AB";
+  const a=selectedPair[0] || "A";
+  const b=selectedPair[1] || "B";
+  const ids=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
   const addMergedItemToCart=(p)=>{
-    removeFromMerge(p.id);
+    setWishlists(w=>({...w,[a]:(w[a]||[]).filter(id=>id!==p.id),[b]:(w[b]||[]).filter(id=>id!==p.id)}));
     onCart(p,true);
   };
-
-  const deleteMergedItem=(id)=>removeFromMerge(id);
-
-  return <main className="page">
-    <section className="savedMerges mergeWindowLists">
-      <div className="sectionHead">
-        <div>
-          <span className="eyebrow">SAVED MERGE LISTS</span>
-          <h2>Your Merged Lists</h2>
-          <p>Each merge is saved independently from Wishlist A, B and C.</p>
-        </div>
-      </div>
-
-      {savedMerges.length
-        ? <div className="mergeHistory">
-            {savedMerges.map(key=>
-              <button className={"savedMergeCard "+(key===selectedPair?"active":"")} key={key} onClick={()=>onNavigate("merge",key)}>
-                <b>Wishlist {key[0]} + Wishlist {key[1]}</b>
-                <span>{key===selectedPair?"Currently open":"Open merged list →"}</span>
-              </button>
-            )}
-          </div>
-        : <div className="noMergedLists">
-            <h3>No Merged lists</h3>
-            <p>No merge lists have been created yet. Go to Wishlist and choose two lists to create a merge.</p>
-          </div>}
-    </section>
-
-    {selectedPair ? <>
-      <button className="backBtn" onClick={()=>onNavigate("wishlist")}><Icon name="back" size={18}/> Back to Wishlist</button>
-      <div className="pageTitle">
-        <span className="eyebrow">MERGED LIST</span>
-        <h1>Wishlist {a} + Wishlist {b}</h1>
-        <p>{ids.length} unique product{ids.length!==1?"s":""} · duplicates automatically removed by Product ID</p>
-      </div>
-
-      {ids.length
-        ? <div className="mergedGrid">{ids.map(id=>{
-            const p=products.find(x=>x.id===id); if(!p) return null;
-            return <div className="mergedItem" key={id}>
-              <img src={p.image} alt={p.name}/>
-              <div>
-                <span className="sku">Product ID: {p.id}</span>
-                <h3>{p.name}</h3>
-                <b>₹{p.price.toLocaleString("en-IN")}</b>
-                <div className="mergeActions">
-                  <button className="miniCart" onClick={()=>addMergedItemToCart(p)}>Add to Cart</button>
-                  <button className="deleteBtn" onClick={()=>deleteMergedItem(p.id)}>Delete</button>
-                </div>
-              </div>
-            </div>
-          })}</div>
-        : <div className="emptyPanel">
-            <h2>This Merge List is empty</h2>
-            <p>When all products are removed, this merge option is automatically removed from Your Merged Lists.</p>
-            <button className="primary" onClick={()=>onNavigate("wishlist")}>Back to Wishlist</button>
-          </div>}
-    </> : <div className="emptyPanel mergeEmptyState">
-      <h2>No Merged lists</h2>
-      <p>Create a merge from Wishlist A+B, A+C, or B+C. Your saved merge lists will appear here.</p>
-      <button className="primary" onClick={()=>onNavigate("wishlist")}>Go to Wishlist</button>
-    </div>}
+  return <main className="page"><button className="backBtn" onClick={()=>onNavigate("wishlist")}><Icon name="back" size={18}/> Back to Wishlist</button><div className="pageTitle"><span className="eyebrow">MERGED LIST</span><h1>Wishlist {a} + Wishlist {b}</h1><p>{ids.length} unique product{ids.length!==1?"s":""} · duplicates automatically removed by Product ID</p></div>
+    {ids.length?<div className="mergedGrid">{ids.map(id=>{const p=products.find(x=>x.id===id); if(!p) return null; return <div className="mergedItem" key={id}><img src={p.image} alt={p.name}/><div><span className="sku">Product ID: {p.id}</span><h3>{p.name}</h3><b>₹{p.price.toLocaleString("en-IN")}</b><button className="miniCart" onClick={()=>addMergedItemToCart(p)}>Add to Cart</button></div></div>})}</div>:<div className="emptyPanel">Your selected lists have no products yet.</div>}
   </main>
 }
 
@@ -357,70 +213,6 @@ export default function App(){
   const [selectedAddress,setSelectedAddress]=useState(saved.selectedAddress || (saved.addresses || addressesSeed)[0]);
   const [cart,setCart]=useState(saved.cart || []);
   const [wishlists,setWishlists]=useState(saved.wishlists || {A:["123","201"],B:["123","501"],C:["301"]});
-  const [mergedLists,setMergedLists]=useState(saved.mergedLists || ["AB"]);
-  const [mergedContents,setMergedContents]=useState(saved.mergedContents || {});
-
-  React.useEffect(()=>{
-    if(Object.keys(mergedContents||{}).length===0 && (mergedLists||[]).length){
-      const seeded={};
-      (mergedLists||[]).forEach(key=>{
-        const a=key[0],b=key[1];
-        seeded[key]=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
-      });
-      setMergedContents(seeded);
-    }
-  },[]);
-
-  // Wishlist deletions propagate to every saved Merge List.
-  // Deleting from a Merge List itself never changes Wishlist A/B/C.
-  React.useEffect(()=>{
-    setMergedContents(prev=>{
-      let changed=false;
-      const next={...prev};
-      Object.keys(next).forEach(key=>{
-        const a=key[0], b=key[1];
-        const allowed=new Set([...(wishlists[a]||[]),...(wishlists[b]||[])]);
-        const filtered=(next[key]||[]).filter(id=>allowed.has(id));
-        if(filtered.length===0){ delete next[key]; changed=true; }
-        else if(filtered.length!==(next[key]||[]).length){ next[key]=filtered; changed=true; }
-      });
-      if(changed) return next;
-      return prev;
-    });
-  },[wishlists]);
-
-  React.useEffect(()=>{
-    if(Object.keys(mergedContents||{}).length===0 && (mergedLists||[]).length){
-      const seeded={};
-      (mergedLists||[]).forEach(key=>{
-        const a=key[0],b=key[1];
-        seeded[key]=[...new Set([...(wishlists[a]||[]),...(wishlists[b]||[])])];
-      });
-      setMergedContents(seeded);
-    }
-  },[]);
-
-  // Wishlist deletions propagate to every saved Merge List.
-  // Deleting from a Merge List itself never changes Wishlist A/B/C.
-  React.useEffect(()=>{
-    setMergedContents(prev=>{
-      let changed=false;
-      const next={...prev};
-      Object.keys(next).forEach(key=>{
-        const a=key[0], b=key[1];
-        const allowed=new Set([...(wishlists[a]||[]),...(wishlists[b]||[])]);
-        const filtered=(next[key]||[]).filter(id=>allowed.has(id));
-        if(filtered.length===0){ delete next[key]; changed=true; }
-        else if(filtered.length!==(next[key]||[]).length){ next[key]=filtered; changed=true; }
-      });
-      if(changed) return next;
-      return prev;
-    });
-  },[wishlists]);
-
-  React.useEffect(()=>{
-    setMergedLists(Object.keys(mergedContents||{}));
-  },[mergedContents]);
 
   const navigate=(v,p=null)=>{setView(v);setParam(p);window.scrollTo({top:0,behavior:"smooth"})};
   const addCart=(p,buyNow=false)=>{
@@ -432,7 +224,7 @@ export default function App(){
   const removeCart=i=>setCart(c=>c.filter((_,idx)=>idx!==i));
   const total=cart.reduce((s,p)=>s+p.price,0);
   React.useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({addresses,selectedAddress,cart,wishlists,mergedLists,mergedContents}));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({addresses,selectedAddress,cart,wishlists}));
   }, [addresses,selectedAddress,cart,wishlists]);
 
   const search=(q)=>{const p=products.find(x=>`${x.name} ${x.category}`.toLowerCase().includes(q.toLowerCase())); if(p)navigate("product",p.id); else if(q)alert(`No demo product found for "${q}"`)};
@@ -442,8 +234,8 @@ export default function App(){
     {view==="home"&&<Home onNavigate={navigate} onCart={addCart} onWish={addWish}/>}
     {view==="category"&&<Category category={param} onNavigate={navigate} onCart={addCart} onWish={addWish}/>}
     {view==="product"&&<ProductPage p={products.find(p=>p.id===param)||products[0]} onBack={()=>navigate("home")} onCart={addCart}/>}
-    {view==="wishlist"&&<Wishlist wishlists={wishlists} setWishlists={setWishlists} mergedLists={mergedLists} setMergedLists={setMergedLists} mergedContents={mergedContents} setMergedContents={setMergedContents} onNavigate={navigate} onCart={addCart}/>}
-    {view==="merge"&&<Merge pair={param||"AB"} wishlists={wishlists} setWishlists={setWishlists} mergedLists={mergedLists} setMergedLists={setMergedLists} mergedContents={mergedContents} setMergedContents={setMergedContents} onNavigate={navigate} onCart={addCart}/>}
+    {view==="wishlist"&&<Wishlist wishlists={wishlists} setWishlists={setWishlists} onNavigate={navigate} onCart={addCart}/>}
+    {view==="merge"&&<Merge pair={param||"AB"} wishlists={wishlists} setWishlists={setWishlists} onNavigate={navigate} onCart={addCart}/>}
     {view==="orders"&&<Orders/>}
     {view==="cart"&&<Cart cart={cart} onRemove={removeCart} onNavigate={navigate} onPay={()=>navigate("payment")}/>}
     {view==="payment"&&<Payment total={total} onNavigate={navigate}/>}
