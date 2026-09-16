@@ -6,7 +6,7 @@ GoWeb is a React + Vite e-commerce storefront prototype.
 
 Repository name: `GoWeb`
 
-Expected public URL:
+CLICK THE LINK BELOW FOR PROTOTYPE: 
 
 `https://roshanravi007.github.io/GoWeb/`
 
